@@ -1,29 +1,24 @@
-//your JS code here. If required.
-const buttons = document.getElementById('buttons');
-const sounds = ['applause', 'boo', 'gasp', 'tada', 'victory', 'wrong'];
-const audioElements = {};
+const apiKey = 'YOUR_API_KEY_GOES_HERE';
+const buttons = document.querySelectorAll('.btn, .stop');
 
-sounds.forEach(sound => {
-    const audio = new Audio(`sounds/${sound}.mp3`);
-    audioElements[sound] = audio;
-});
-
-buttons.addEventListener('click', event => {
-    const { target } = event;
-    if (target.classList.contains('btn')) {
-        const sound = target.getAttribute('data-sound');
-        if (sound) {
-            stopSounds();
-            audioElements[sound].play();
-        } else if (target.classList.contains('stop')) {
-            stopSounds();
+buttons.forEach(button => {
+    button.addEventListener('click', () => {
+        const soundId = button.dataset.sound;
+        if (soundId === 'stop') {
+            // Stop any currently playing audio
+            document.querySelector('audio').pause();
+        } else {
+            // Fetch sound details from API
+            const url = `https://freesound.org/apiv2/sounds/${soundId}/?token=${apiKey}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const audioUrl = data.previews['preview-lq-mp3'];
+                    // Create and play the audio element
+                    const audio = new Audio(audioUrl);
+                    audio.play();
+                })
+                .catch(error => console.error(error));
         }
-    }
-});
-
-function stopSounds() {
-    Object.values(audioElements).forEach(audio => {
-        audio.pause();
-        audio.currentTime = 0;
     });
-}
+});
