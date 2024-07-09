@@ -1,25 +1,26 @@
-let currentAudio = null; // Global variable to store currently playing audio
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.btn');
+    const stopButton = document.querySelector('.stop');
+    const audioPlayer = document.getElementById('audioPlayer');
 
-const buttons = document.querySelectorAll('.btn');
-const stopButton = document.querySelector('.stop');
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            const soundFile = this.getAttribute('data-sound');
+            playSound(soundFile);
+        });
+    });
 
-buttons.forEach(button => {
-  button.addEventListener('click', () => {
-    // Stop the current audio if it's playing
-    if (currentAudio) {
-      currentAudio.pause();
+    stopButton.addEventListener('click', function() {
+        stopSound();
+    });
+
+    function playSound(soundFile) {
+        audioPlayer.src = soundFile;
+        audioPlayer.play();
     }
-    
-    const soundName = button.getAttribute('data-sound');
-    currentAudio = new Audio(`sounds/${soundName}.mp3`); // Update the current audio
-    currentAudio.play();
-  });
-});
 
-stopButton.addEventListener('click', () => {
-  // Stop the current audio if it's playing
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio = null; // Reset the current audio
-  }
+    function stopSound() {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+    }
 });
